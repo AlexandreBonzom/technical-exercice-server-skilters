@@ -15,7 +15,7 @@ app.use(helmet());
 
 //import DB/Connection
 const mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost/userSkilters", { useNewUrlParser: true });
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
 
 //parse request bodies as req.body
 const bodyParser = require("body-parser");
@@ -25,6 +25,6 @@ app.use(bodyParser.json());
 const userRoutes = require("./Routes/userRoute.js");
 app.use("/user", userRoutes);
 
-app.listen(3000, () => {
-  console.log("Server launche on port 3000");
+app.listen(process.envPORT, () => {
+  console.log(`Server launche on port: ${process.env.PORT}`);
 });
