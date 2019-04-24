@@ -25,6 +25,6 @@ app.use(bodyParser.json());
 const userRoutes = require("./Routes/userRoute.js");
 app.use("/user", userRoutes);
 
-app.listen(process.envPORT, () => {
+app.listen(process.env.PORT, () => {
   console.log(`Server launche on port: ${process.env.PORT}`);
 });
