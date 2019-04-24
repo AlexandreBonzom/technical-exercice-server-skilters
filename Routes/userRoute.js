@@ -17,36 +17,40 @@ const inputDataTreatment = require("../Middlewares/inputDataTreatment");
 // CRUD
 //Create new users
 router.post("/createUser", inputDataTreatment, async (req, res) => {
-  try {
-    const user = await User.findOne({ "public.email": req.body.email });
-    if (user) {
-      res.status(400).json({ message: "Email already in the database." });
-    } else {
-      const salt = uidSafe.sync(19);
+  if (req.isError) {
+    res.status(400).json({ message: req.errorMessage });
+  } else {
+    try {
+      const user = await User.findOne({ "public.email": req.body.email });
+      if (user) {
+        res.status(400).json({ message: "Email already in the database." });
+      } else {
+        const salt = uidSafe.sync(19);
 
-      const token = uidSafe.sync(19);
+        const token = uidSafe.sync(19);
 
-      const newUser = new User({
-        public: {
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          email: req.body.email,
-          telephone: req.body.telephone,
-          activitySectors: req.body.activitySectors,
-          availableDate: req.body.availableDate,
-          token: token
-        },
-        private: {
-          salt: salt,
-          hash: SHA256(req.body.password, salt).toString(encBase64)
-        }
-      });
+        const newUser = new User({
+          public: {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            telephone: req.body.telephone,
+            activitySectors: req.body.activitySectors,
+            availableDate: req.body.availableDate,
+            token: token
+          },
+          private: {
+            salt: salt,
+            hash: SHA256(req.body.password, salt).toString(encBase64)
+          }
+        });
 
-      await newUser.save();
-      res.status(200).json({ user: newUser.public });
+        await newUser.save();
+        res.status(200).json({ user: newUser.public });
+      }
+    } catch (error) {
+      res.status(400).json({ message: error.message });
     }
-  } catch (error) {
-    res.status(400).json({ message: error.message });
   }
 });
 
